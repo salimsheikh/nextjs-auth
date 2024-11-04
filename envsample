@@ -1,0 +1,11 @@
+PORT=8000
+MONGODB_URL=mongodb+srv://xxxxxxxxxxxxxxxxxx:xxxxxxxxxxxxxxxxxxxxxxxxxxxx@xxxxxxx.xxxxxx.xxxxxxxxxxx.xxx/xxxxxxx
+MONGODB_USER=xxxxxxxxxxxxxxxxxx
+MONGODB_PASSWORD=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+JWT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TOKEN_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+DOMAIN=http://localhost:3000/
+EMAIL_SMTP=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+EMAIL_PORT=0000
+EMAIL_USER=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+EMAIL_PASSWORD=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
