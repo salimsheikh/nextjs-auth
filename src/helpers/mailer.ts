@@ -5,6 +5,14 @@ import bcryptjs from 'bcryptjs';
 export const sendEmail = async ({ email, emailType, userID }: any) => {
     try {
 
+        console.log("Sending email init");
+
+        console.log("email: " , email);
+        console.log("emailType: " , emailType);
+        console.log("userID: " , userID);
+        console.log("userID: " , userID.toString());
+        
+
         const hashedToken = await bcryptjs.hash(userID.toString(), 10);
         const tokenExpiry = Date.now() + 360000;
         const verify_url = `${process.env.DOMAIN}/verifyemail?token=${hashedToken}`;
@@ -45,6 +53,7 @@ export const sendEmail = async ({ email, emailType, userID }: any) => {
         }
 
         const mail_response = await transport.sendMail(mail_option);
+
         return mail_response;
 
 
