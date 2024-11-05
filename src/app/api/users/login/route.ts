@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
             return response.json({ message: 'All fields are required.' }, { status: 409 })
         }        
 
-        const user = await User.findOne(email);
+        const user = await User.findOne({email:email});
 
         if(!user){
             return response.json({ message: 'User does not exists.' }, { status: 400 })

@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         user.verifyToken = undefined;
         user.verifyTokenExpiry = undefined;
 
-        await user.saved();
+        await user.save();
 
         return response.json(
             { error: "Email varified successfully." },
