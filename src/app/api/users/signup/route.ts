@@ -5,11 +5,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcryptjs from 'bcryptjs';
 import { sendEmail } from "@/helpers/mailer";
 
-await connectdb();
-
 export async function POST(request: NextRequest) {
 
-    const res = NextResponse;
+    await connectdb();
+
+    const response = NextResponse;
 
     // Simple email regex pattern
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
         // Deletes all documents in the User collection (use with caution)
         // This is potentially risky as it deletes all users; it's not typically part of a registration endpoint.
-        await User.deleteMany({});
+        //await User.deleteMany({});
 
         const requestBody = await request.json();
 
@@ -32,22 +32,22 @@ export async function POST(request: NextRequest) {
 
         //Validation
         if (!username || !email || !password) {
-            return res.json({ message: 'All fields are required.' }, { status: 409 })
+            return response.json({ message: 'All fields are required.' }, { status: 409 })
         }
 
         // Validate email format
         if (!email || !emailRegex.test(email)) {
-            return res.json({ message: 'Invalid email.' }, { status: 400 })
+            return response.json({ message: 'Invalid email.' }, { status: 400 })
         }
 
         const user = await User.findOne({ username: username });
         if (user) {
-            return res.json({ message: 'Username exists.' }, { status: 400 })
+            return response.json({ message: 'Username exists.' }, { status: 400 })
         }
 
         const email_user = await User.findOne({ email: email });
         if (email_user) {
-            return res.json({ message: 'Email exists.' }, { status: 400 })
+            return response.json({ message: 'Email exists.' }, { status: 400 })
         }        
 
         const salt = await bcryptjs.genSalt(10);
@@ -75,14 +75,14 @@ export async function POST(request: NextRequest) {
 
         console.log(email_result);
 
-        return res.json({
+        return response.json({
             message: "User registered successfully.",
             success: true,           
         }, { status: 201 })
 
 
     } catch (error: any) {
-        return res.json(
+        return response.json(
             { error: error.message, 'error type' : 'catch' },
             { status: 500 }
         )
