@@ -28,6 +28,8 @@ export async function POST(request: NextRequest) {
             )
         }
 
+        console.log(token);
+
         const user = await User.findOne({ verifyToken: token, verifyTokenExpiry: { $gt: Date.now() } });
 
         if (!user) {
@@ -47,14 +49,8 @@ export async function POST(request: NextRequest) {
 
         return response.json(
             { error: "Email varified successfully." },
-            { status: 400 }
-        )
-
-        return response.json({
-            message: "User registered successfully.",
-            success: true,
-        }, { status: 201 })
-
+            { status: 200 }
+        );
 
     } catch (error: any) {
         return response.json(

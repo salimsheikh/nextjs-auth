@@ -5,19 +5,20 @@ import bcryptjs from 'bcryptjs';
 export const sendEmail = async ({ email, emailType, userID }: any) => {
     try {
         const hashedToken = await bcryptjs.hash(userID.toString(), 10);
+        const urlSafeToken = Buffer.from(hashedToken).toString('base64');
         const tokenExpiry = Date.now() + 360000;
-        const verify_url = `${process.env.DOMAIN}/verifyemail?token=${hashedToken}`;
+        const verify_url = `${process.env.DOMAIN}/verifyemail?token=${urlSafeToken}`;
         let message_body = '';
         if (emailType === 'VERIFY') {
             await User.findByIdAndUpdate(userID,
-                { $set: { verifyToken: hashedToken, verifyTokenExpiry: tokenExpiry } }
+                { $set: { verifyToken: urlSafeToken, verifyTokenExpiry: tokenExpiry } }
             );
 
             message_body = `<p>Click <a href="${verify_url}">here</a> to verify your email or copy and past the link below in your browser. <br>${verify_url}</p>`;
 
         } else if (emailType === 'RESET') {
             await User.findByIdAndUpdate(userID,
-                { $set: { forgotPasswrodToken: hashedToken, forgotPasswrodTokenExpiry: tokenExpiry } }
+                { $set: { forgotPasswrodToken: urlSafeToken, forgotPasswrodTokenExpiry: tokenExpiry } }
             );
 
             message_body = `<p>Click <a href="${verify_url}">here</a> to reset your password or copy and past the link below in your browser. <br>${verify_url}</p>`;

@@ -16,23 +16,17 @@ export async function POST(request: NextRequest) {
 
     try {
 
-        // Deletes all documents in the User collection (use with caution)
-        // This is potentially risky as it deletes all users; it's not typically part of a registration endpoint.
-        //await User.deleteMany({});
+        //Deletes all documents in the User collection (use with caution)
+        //This is potentially risky as it deletes all users; it's not typically part of a registration endpoint.
+        await User.deleteMany({});
 
-        const requestBody = await request.json();
+        const requestBody = await request.json();        
 
-        console.log("Request Body", requestBody);
-
-        const { username, email, password } = requestBody;
-
-        console.log("username", username);
-        console.log("email", email);
-        console.log("password", password);
+        const { username, email, password } = requestBody;        
 
         //Validation
         if (!username || !email || !password) {
-            return response.json({ message: 'All fields are required.' }, { status: 409 })
+            return response.json({ message: 'All fields are required.' }, { status: 400 })
         }
 
         // Validate email format
@@ -41,13 +35,15 @@ export async function POST(request: NextRequest) {
         }
 
         const user = await User.findOne({ username: username });
+        
         if (user) {
-            return response.json({ message: 'Username exists.' }, { status: 400 })
+            return response.json({ message: 'Username exists.' }, { status: 409 })
         }
 
         const email_user = await User.findOne({ email: email });
+
         if (email_user) {
-            return response.json({ message: 'Email exists.' }, { status: 400 })
+            return response.json({ message: 'Email exists.' }, { status: 409 })
         }        
 
         const salt = await bcryptjs.genSalt(10);
@@ -58,22 +54,10 @@ export async function POST(request: NextRequest) {
             username, email, password: hashedPassword
         });
 
-        const savedUser = await newUser.save();
-
-        console.log("User Created");
-
-        console.log(savedUser);
-
-        console.log("User ID");
-
-        console.log("User ID", savedUser._id);        
-
-        console.log("Sending email");
+        const savedUser = await newUser.save();       
 
         //Send Email Verification
         const email_result = await sendEmail({ email: email, emailType: 'VERIFY', userID: savedUser._id });
-
-        console.log(email_result);
 
         return response.json({
             message: "User registered successfully.",
