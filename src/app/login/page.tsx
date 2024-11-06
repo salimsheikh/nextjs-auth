@@ -37,7 +37,7 @@ export default function LoginForm() {
       setFormData({ email: "", password: "" });
 
       // Redirect to login page upon successful signup
-      // router.push("/profile");
+      router.push("/profile");
     } catch (error: any) {
       // Handle and log errors
       console.log("Catch Error: ", error.message);

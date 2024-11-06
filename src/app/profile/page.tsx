@@ -1,107 +1,75 @@
 // components/ProfilePage.tsx
-'use client'
-import { useState } from 'react';
-
+"use client";
+import { useState } from "react";
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
-  // Initial user data (can be fetched from an API or from context)
-  const [user, setUser] = useState({
-    username: 'john_doe',
-    email: 'john@example.com',
-    password: '',
-  });
+  const router = useRouter();
 
-  // Form fields
-  const [newUsername, setNewUsername] = useState(user.username);
-  const [newEmail, setNewEmail] = useState(user.email);
-  const [newPassword, setNewPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [data, setData] = useState("nothing");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === 'username') {
-      setNewUsername(value);
-    } else if (name === 'email') {
-      setNewEmail(value);
-    } else if (name === 'password') {
-      setNewPassword(value);
+  const getUserDetails = async () => {
+    try {
+      const res = await axios.post("/api/users/profile");
+      console.log(res.data);
+
+      console.log(res.data.data._id);
+
+      setData(res.data.data._id);
+    } catch (error: any) {
+      console.log("error");
+      console.log(error.message);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Simulate form submission
-    setMessage('Your profile has been updated successfully!');
-
-    // Here, you would typically send the updated profile to your backend API
-    setUser({
-      username: newUsername,
-      email: newEmail,
-      password: newPassword,
-    });
+  const logout = async () => {
+    try {
+      await axios.get("/api/users/logout");
+      console.log("Logout successfully.");
+      router.push("/login");
+    } catch (error: any) {
+      console.log(error.message);
+    }
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 shadow-lg rounded-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-700">Profile</h2>
-        <p className="text-center text-gray-500 text-sm mt-2">Update your account details below</p>
+        <h2 className="text-2xl font-bold text-center text-gray-700">
+          Profile
+        </h2>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          {/* Username Field */}
-          <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-600">Username</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={newUsername}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Your username"
-            />
-          </div>
+        <div className="text-center mt-4">
+          {data === "nothing" ? (
+            "Profile not found"
+          ) : (
+            <>
+              <Link href={`/profile/${data}`}>{data}Profile</Link>
+            </>
+          )}
+        </div>
 
-          {/* Email Field */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-600">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={newEmail}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          {/* Password Field */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-600">New Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={newPassword}
-              onChange={handleChange}
-              className="w-full px-4 py-2 mt-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="New password (optional)"
-            />
-          </div>
-
+        <div className="text-center mt-4">
           <button
-            type="submit"
-            className="w-full px-4 py-2 text-white font-semibold bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300"
+            type="button"
+            onClick={logout}
+            className="px-4 py-2 text-white font-semibold bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300"
           >
-            Update Profile
+            Logout
           </button>
-        </form>
+        </div>
 
-        <p className="mt-4 text-center text-gray-600">{message}</p>
+        <div className="text-center mt-4">
+          <button
+            type="button"
+            onClick={getUserDetails}
+            className="px-4 py-2 text-white font-semibold bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300"
+          >
+            User Details
+          </button>
+        </div>
       </div>
     </div>
   );
